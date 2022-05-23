@@ -70,7 +70,8 @@
     position: absolute;
     width:70%;
     right: 0;
-    height: auto;
+    max-height: 60vh;
+    overflow-y: scroll;
     background-color: white;
     z-index: 99999;
 

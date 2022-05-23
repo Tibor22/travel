@@ -20,7 +20,7 @@ export default function Search({formData,setFormData}) {
 					countryCode: searchResult.country_code,
 					countryName: searchResult.country_name,
 				}
-			}).filter(searchResult => searchResult.type === 'airport')
+			})
 			setAirports(airports)
 			// console.log(airports);
 			}
@@ -35,6 +35,11 @@ const handleClick = (airport) => {
 	setFormData({...formData,airport:airport,search:airport.airportName})
 	setAirports(null)
 }
+
+const handleChange = (e) => {
+	setFormData({...formData,search:e.target.value})
+	setAirports('')
+}
 console.log(airports);
 	return (
 		<>
@@ -42,7 +47,7 @@ console.log(airports);
 				<label className="search__label">
 					<span className="search__span">Travel From:</span>
 					<input 
-					onChange={(e) => setFormData({...formData,search:e.target.value})} 
+					onChange={(e) => handleChange(e)} 
 					className="search__input" 
 					type="text" 
 					placeholder="Search Airport" 
