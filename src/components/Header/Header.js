@@ -1,9 +1,15 @@
 import "./Header.css";
-import React, { useState,useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import DatePickerForm from "../DatePicker/DatePicker.js";
 import Search from "../Search/Search.js";
+import { TravelDataContext } from "../../context/TravelDataContext.js";
+import { useContext } from "react";
+
 
 export default function Header() {
+	const {dispatch} = useContext(TravelDataContext);
+	console.log(dispatch);
+
 	const [range, setRange] = useState(null);
 	const [formData, setFormData] = useState({
 		search: "",
@@ -16,26 +22,30 @@ export default function Header() {
 					const year = time.getFullYear();
 					const month = time.getMonth();
 					const day = time.getDate();
-					return year + '/' + month + '/' + day
+					return year + "/" + month + "/" + day;
 				});
 				const time = {
 					from: range2[0],
 					to: range2[1],
-				}
-				console.log(time)
-				setFormData({...formData,from:time.from,to:time.to})
+				};
+				console.log(time);
+				setFormData({ ...formData, from: time.from, to: time.to });
 			}
 			createRange();
 		}
-	},[range])
-
-
+	}, [range]);
 	const handleSubmit = (e) => {
-		e.preventDefault()
-		console.log(formData);
+		e.preventDefault();
+		if(!formData?.airport?.airportCode || !formData.from || !formData.to) return
+		dispatch({ type: "SEARCH_READY", payload: formData});
+		setRange(null)
+		setFormData({
+			search: "",
+			range,
+		})
 	}
 
-	console.log(formData, range,range?.range.length);
+	console.log(formData, range, range?.range.length);
 	return (
 		<div className="header">
 			<img
@@ -45,7 +55,12 @@ export default function Header() {
 			/>
 			<form onSubmit={handleSubmit}>
 				<Search formData={formData} setFormData={setFormData} />
-				<DatePickerForm range={range} setRange={setRange} formData={formData} setFormData={setFormData}/>
+				<DatePickerForm
+					range={range}
+					setRange={setRange}
+					formData={formData}
+					setFormData={setFormData}
+				/>
 				<button type="submit">Search</button>
 			</form>
 		</div>

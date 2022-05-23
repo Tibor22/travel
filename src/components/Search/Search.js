@@ -11,7 +11,7 @@ export default function Search({formData,setFormData}) {
         async function fetchSearch() {
 			const res= await fetch(`https://autocomplete.travelpayouts.com/places2?locale=en&types[]=airport&types[]=city&term=${formData.search}`);
 			const searchResult = await res.json();
-
+console.log('SEARCH RESULT:',searchResult);
 			const airports = searchResult.map(searchResult =>{
 				return {
 					type: searchResult.type,
@@ -19,6 +19,8 @@ export default function Search({formData,setFormData}) {
 					airportName: searchResult.name,
 					countryCode: searchResult.country_code,
 					countryName: searchResult.country_name,
+					lon: searchResult.coordinates.lon,
+					lat: searchResult.coordinates.lat,
 				}
 			})
 			setAirports(airports)
@@ -52,6 +54,7 @@ console.log(airports);
 					type="text" 
 					placeholder="Search Airport" 
 					value={formData.search}
+					required
 					/>
 			
 				</label>
