@@ -1,0 +1,25 @@
+
+.date-container {
+width: 30vw;
+
+}
+.date-picker {
+    display: flex;
+    align-items:center;
+    font-size:1.5rem;
+   
+}
+.span__header {
+    width:22rem;
+}
+
+#datePicker-15 input {
+   
+padding: 1.5rem;
+} 
+#datePicker-15 input::placeholder {
+font-size: 1rem;
+} 
+#datePicker-15 input[type="text"] {
+font-size: 1rem;
+} 

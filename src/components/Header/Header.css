@@ -1,0 +1,12 @@
+.header {
+    height:5rem;
+    display: flex;
+    justify-content:left;
+    align-items:center;
+  
+}
+
+form {
+    display: flex;
+    margin-left:2rem
+}
