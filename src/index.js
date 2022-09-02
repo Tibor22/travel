@@ -16,3 +16,23 @@ root.render(
 // to log results (for example: reportWebVitals(console.log))
 // or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
 
+
+      // { 
+        //     "arrivalCountry": "DE", 
+        //     "departureCountry": "GB", 
+        //     "iata": "BER",
+        //     "price": 300 
+        //   },
+        //   { 
+        //     "arrivalCountry": "ES", 
+        //     "departureCountry": "GB", 
+        //     "iata": "MAD",
+        //     "price": 100
+        // },
+		// { 
+        //     "arrivalCountry": "FR", 
+        //     "departureCountry": "GB", 
+        //     "iata": "CDG",
+        //     "price": 200
+        // }
+	

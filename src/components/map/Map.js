@@ -10,92 +10,92 @@ import { europeData } from "../../Data/europeData.js";
 import { useState, useEffect } from "react";
 import { TravelDataContext } from "../../context/TravelDataContext.js";
 import { useContext } from "react";
-import L from 'leaflet';
+import L from "leaflet";
 import "leaflet/dist/leaflet.css";
+import { API_KEY } from "../../config/config.js";
+import Spinner from 'react-bootstrap/Spinner'
+import 'bootstrap/dist/css/bootstrap.min.css';
+import './Map.css'
+import iconShadow from "leaflet/dist/images/marker-shadow.png";
+import plane2 from "../../assets/plane2.png";
 
-
-
-import icon from 'leaflet/dist/images/marker-icon.png';
-import iconShadow from 'leaflet/dist/images/marker-shadow.png';
-import plane from '../../assets/plane.png'
-import plane2 from '../../assets/plane2.png'
-
-
-export default function Map() {
+export default function Map({ flightData, setFlightData }) {
 	const { flightDataCollection, dispatch } = useContext(TravelDataContext);
+const [destination,setDestination] = useState(null)
+const [isPending,setIsPending] = useState(false);
 
 	console.log("STATE IN MAP:", flightDataCollection);
-
-	const [flightData, setFlightData] = useState([
-		{ arrivalCountry: "HU", departureCountry: "GB", price: 555 },
-		{ arrivalCountry: "DE", departureCountry: "GB", price: 300 },
-		{ arrivalCountry: "FR", departureCountry: "GB", price: 45 },
-	]);
+	const from = flightDataCollection.from;
+	const to = flightDataCollection.to;
+	const origin = flightDataCollection.airport.airportCode;
 
 	let DefaultIcon = L.icon({
 		iconUrl: plane2,
 		shadowUrl: iconShadow,
-		// iconUrl: 'https://img.lovepik.com/element/45001/7431.png_300.png',
 		iconSize: [61, 71], // size of the icon
 		iconAnchor: [30, 50], // point of the icon which will correspond to marker's location
-		popupAnchor: [0, -71] // point from which the popup should open relative to the iconAnchor                          
+		popupAnchor: [0, -71], // point from which the popup should open relative to the iconAnchor
 	});
-	
+
 	L.Marker.prototype.options.icon = DefaultIcon;
-	
-	
+
+	console.log(destination);
 
 	useEffect(() => {
-		const priceSum = flightData.reduce((sum, currVal) => {
-			return (sum += currVal.price);
-		}, 0);
-		const avgTravelCost = Math.floor(priceSum / flightData.length);
-		setFlightData((prevData) =>
-			prevData.map((data) => {
-				const cheap = avgTravelCost * 0.8;
-				const expensive = avgTravelCost * 1.2;
-				console.log("CHEAP", cheap, "EXPENSIVE", expensive);
-				if (data.price <= cheap) {
-					return { ...data, category: "cheap" };
-				}
-				if (data.price >= cheap && data.price <= expensive) {
-					return { ...data, category: "normal" };
-				}
-				if (data.price >= expensive) {
-					return { ...data, category: "expensive" };
-				}
+
+		if(destination) {
+	       fetchRoute()
+		}
+		async function fetchRoute() {
+			setIsPending(true)
+			const res =  await  fetch(`https://api.flightapi.io/roundtrip/${API_KEY}/${origin}/${destination.iata}/${from}/${to}/2/0/0/Economy/GBP`)
+			console.log('RESPONSE:',res);
+			const data = await res.json();
+			console.log('THE MOST IMPORTANT DATA',data);
+			const flightData = data.fares.slice(0,10).map(fare => {
+				   return {price : fare.price.originalAmount,
+					       total: fare.price.totalAmount,
+						   provider: fare.providerCode,
+						   url:fare.handoffUrl,
+						   tripId :fare.tripId,
+
+				       }
 			})
-		);
-	}, []);
+              setIsPending(false)
+			console.log('FLIGHT DATA:',flightData);
+			dispatch({ type: "COUNTRY_FOUND", payload: flightData })
+		}
 
-	console.log(flightData);
+	
+	
+	},[destination])
 
-	const changeCountryColor = (event) => {
+
+
+	async function chooseCountry(event) {
+		console.log(event);
+		console.log(event.target.feature.properties.iso_a2);
 		event.target.setStyle({
 			color: "green",
-			//   fillColor: this.state.color,
 			fillOpacity: 1,
 		});
-	};
-	// Math.floor(Math.random() * 1000);
+		setDestination({
+			country_a2: event.target.feature.properties.iso_a2,
+			countryName: event.target.feature.properties.admin,
+			iata: event.target.feature.iata,
+		});
+	
+	}
 	function onEachCountry(country, layer) {
-		// console.log('CURRENT COUNTRY ISO:', country.properties.iso_a2);
 		const currentCheapestFlight = flightData.filter((flight) => {
 			if (country.properties.iso_a2 === flight.arrivalCountry) return true;
 		});
-		// console.log(currentCheapestFlight);
 		country.category = currentCheapestFlight[0]?.category;
+		country.iata = currentCheapestFlight[0]?.iata;
 		const countryName = country.properties.admin;
-		// console.log("ON EACH COUNTRY:", countryName);
 		layer.bindPopup(countryName);
-
-		// layer.options.fillOpacity = Math.random(); //0-1 (0.1, 0.2, 0.3)
-		// const colorIndex = Math.floor(Math.random() * this.colors.length);
-		// layer.options.fillColor = this.colors[colorIndex]; //0
-
-		// console.log("LAYER", layer);
 		layer.on({
-			click: changeCountryColor,
+			click: chooseCountry,
 		});
 	}
 
@@ -123,26 +123,24 @@ export default function Map() {
 		}
 	}
 
-	function handleClick(e) {
-		console.log("click");
-		onEachCountry();
-	}
-
 	const position = flightDataCollection && [
 		flightDataCollection.airport.lat,
 		flightDataCollection.airport.lon,
 	];
-	console.log(position);
 	return (
-		<MapContainer
-			onClick={handleClick}
+		<>
+		{isPending && <div className="spinnerMap"><Spinner  variant="info" animation="grow" /></div>}
+		 <MapContainer
 			style={{ height: "calc(100vh - 5rem) " }}
 			id={"mapbox/light-v9"}
 			center={[53.988337, 13.861923]}
 			zoom={3.7}
 		>
+		
 			{flightDataCollection && (
-				<Marker position={position}>
+				<Marker
+					position={position}
+				>
 					<Popup>
 						A pretty CSS3 popup. <br /> Easily customizable.
 					</Popup>
@@ -155,6 +153,9 @@ export default function Map() {
 				onEachFeature={onEachCountry}
 			/>
 		</MapContainer>
+	
+
+</>
 	);
 }
 

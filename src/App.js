@@ -1,4 +1,5 @@
 import Home from './pages/Home/Home.js'
+import Main from './components/Main/Main.js'
 import Header from './components/Header/Header.js'
 import {
   BrowserRouter,
@@ -14,6 +15,7 @@ function App() {
        <Header/>
     <Routes>
       <Route path="/" element={<Home/>}/>
+      <Route path="/main" element={<Main/>} />
     </Routes>
     </BrowserRouter>
 

@@ -1,12 +1,4 @@
 
-/* Loading Spinner */
-.spinner {
-	height:90vh;
-	width:100%;
-	display: grid;
-	place-items: center;
-}
-
 .main {
 	background-image: url('../../assets/image-bg.jpg');
 	background-repeat: no-repeat;

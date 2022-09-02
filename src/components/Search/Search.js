@@ -31,8 +31,6 @@ console.log('SEARCH RESULT:',searchResult);
 	
 	},[formData])
 
-	console.log('FORMDATA:', formData);
-
 const handleClick = (airport) => {
 	setFormData({...formData,airport:airport,search:airport.airportName})
 	setAirports(null)
@@ -42,7 +40,7 @@ const handleChange = (e) => {
 	setFormData({...formData,search:e.target.value})
 	setAirports('')
 }
-console.log(airports);
+
 	return (
 		<>
 			<div className="search__container">

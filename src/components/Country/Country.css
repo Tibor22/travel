@@ -1,0 +1,50 @@
+.sliderContainer {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  left: -400px;
+  width:auto;
+  height:auto;
+  background-color:white;
+  z-index: 9999;
+  -webkit-animation: slide 0.5s forwards;
+padding: 1rem;
+  animation: slide 0.5s forwards;
+  animation-delay: .5s;
+  border-radius: 0px 4px 4px 0px;
+  
+}
+
+.slider__list--item {
+    list-style-type: none;
+    padding: .6rem 0rem;
+    border-bottom: 1px solid lightblue;
+}
+.slider__list--item span{
+    list-style-type: none;
+    padding: .5rem 1rem;
+  
+}
+.slider__list--item a {
+    background-color:lightblue;
+    border-radius: 4px;
+padding: .5rem 1.4rem;
+text-decoration: none;
+color:white;
+
+}
+
+@-webkit-keyframes slide {
+    100% { left: 0; }
+}
+
+@keyframes slide {
+    100% { left: 0; }
+}
+
+.close {
+    position:absolute;
+    top: 4px;
+    right: 4px;
+    cursor: pointer;
+}

@@ -4,11 +4,13 @@ import DatePickerForm from "../DatePicker/DatePicker.js";
 import Search from "../Search/Search.js";
 import { TravelDataContext } from "../../context/TravelDataContext.js";
 import { useContext } from "react";
+import {
+Link
+  } from "react-router-dom";
 
 
 export default function Header() {
 	const {dispatch} = useContext(TravelDataContext);
-	console.log(dispatch);
 
 	const [range, setRange] = useState(null);
 	const [formData, setFormData] = useState({
@@ -20,9 +22,9 @@ export default function Header() {
 			function createRange() {
 				const range2 = range.range.map((time) => {
 					const year = time.getFullYear();
-					const month = time.getMonth();
+					const month = time.getMonth() +1;
 					const day = time.getDate();
-					return year + "/" + month + "/" + day;
+					return year + "-" + month + "-" + day;
 				});
 				const time = {
 					from: range2[0],
@@ -44,15 +46,13 @@ export default function Header() {
 			range,
 		})
 	}
-
-	console.log(formData, range, range?.range.length);
 	return (
 		<div className="header">
-			<img
+			<Link to="main"><img
 				src="https://www.kindpng.com/picc/m/537-5375857_travel-and-tour-logo-hd-png-download.png"
 				style={{ width: "60px", marginLeft: "1rem" }}
 				alt=""
-			/>
+			/></Link>
 			<form onSubmit={handleSubmit}>
 				<Search formData={formData} setFormData={setFormData} />
 				<DatePickerForm

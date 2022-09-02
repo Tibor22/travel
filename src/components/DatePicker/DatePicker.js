@@ -16,7 +16,7 @@ export default function DatePickerForm({range,setRange,formData,setFormData}) {
 					selectionType="range"
 					formatStyle="large"
 					variant="single"
-					value={range ? range.range : '2022.5.23'}
+					value={range ? range.range : '2022.5.25'}
 					onChange={(value) =>  setRange({ range: value })}
 				/>
 			</label>
