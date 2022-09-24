@@ -1,16 +1,16 @@
-import Map from "../../components/map/Map.js";
-import { useFetchMultiple } from "../../hooks/useFetchMultiple.js";
-import { TravelDataContext } from "../../context/TravelDataContext.js";
-import { useContext } from "react";
-import { useEffect, useState } from "react";
-import Spinner from "react-bootstrap/Spinner";
-import "bootstrap/dist/css/bootstrap.min.css";
-import "./Home.css";
-import Country from "../../components/Country/Country.js";
-import bike from "../../assets/bike.jpg"
-import fly from "../../assets/fly.jpg"
-import greece from "../../assets/greece.jpg"
-import Main from "../../components/Main/Main.js"
+import Map from '../../components/map/Map.js';
+import { useFetchMultiple } from '../../hooks/useFetchMultiple.js';
+import { TravelDataContext } from '../../context/TravelDataContext.js';
+import { useContext } from 'react';
+import { useEffect, useState } from 'react';
+import Spinner from 'react-bootstrap/Spinner';
+import 'bootstrap/dist/css/bootstrap.min.css';
+import './Home.css';
+import Country from '../../components/Country/Country.js';
+import bike from '../../assets/bike.jpg';
+import fly from '../../assets/fly.jpg';
+import greece from '../../assets/greece.jpg';
+import Main from '../../components/Main/Main.js';
 
 export default function Home() {
 	const [flightData, setFlightData] = useState(null);
@@ -18,48 +18,57 @@ export default function Home() {
 		useContext(TravelDataContext);
 	let { data, isPending, error } = useFetchMultiple(flightDataCollection);
 
-	console.log("COUNTRYDATA COLLECTIOON IN HOME:", countryDataCollection);
+	console.log('COUNTRYDATA COLLECTIOON IN HOME:', countryDataCollection);
 
 	useEffect(() => {
 		if (flightDataCollection === undefined || !data) return;
-		console.log("DATA:", data);
-		data = data.map((airport) => {
+		console.log('DATA:', data);
+		data = data[0].data.map((offer) => {
 			return {
-				price: airport.filters.minPrice.amount,
-				arrivalCountry: airport.search.legs[0].arrivalCity.countryCode,
-				departureCountry: airport.search.legs[0].departureCity.countryCode,
-				iata: airport.filters.destinationAirports[0].code,
+				price: offer.price.total,
+				arrivalCountry: Object.values(data[0].dictionaries.locations)[0]
+					.countryCode,
+				departureCountry: Object.values(data[0].dictionaries.locations)[1]
+					.countryCode,
+				iata: offer.itineraries[0].segments[
+					offer.itineraries[0].segments.length - 1
+				].arrival.iataCode,
 			};
 		});
 
-		async function fetchFLights() {
-			const res = await fetch("http://localhost:3000/flights");
-			let jsonData = await res.json();
-			jsonData = jsonData.concat(data);
+		console.log('NEW DATA:', data);
 
-			const priceSum = jsonData.reduce((sum, currVal) => {
-				return (sum += currVal.price);
+		async function fetchFLights() {
+			// const res = await fetch('http://localhost:3000/flights');
+			// console.log(res);
+			// let jsonData = await res.json();
+			// jsonData = jsonData.concat(data);
+
+			const priceSum = data.reduce((sum, currVal) => {
+				return (sum += +currVal.price);
 			}, 0);
-			const avgTravelCost = Math.floor(priceSum / jsonData.length);
-			const newData = jsonData.map((jsonData) => {
+			const avgTravelCost = Math.floor(priceSum / data.length);
+			console.log('AVG TRAVEL COST: ', avgTravelCost);
+			const newData = data.map((jsonData) => {
+				console.log('NEWDATA MAP:', jsonData);
 				const cheap = avgTravelCost * 0.8;
 				const expensive = avgTravelCost * 1.2;
 				if (
 					jsonData.arrivalCountry === flightDataCollection.airport.countryCode
 				) {
-					return { ...jsonData, category: "origin" };
+					return { ...jsonData, category: 'origin' };
 				}
 				if (jsonData.price <= cheap) {
-					return { ...jsonData, category: "cheap" };
+					return { ...jsonData, category: 'cheap' };
 				}
 				if (jsonData.price >= cheap && jsonData.price <= expensive) {
-					return { ...jsonData, category: "normal" };
+					return { ...jsonData, category: 'normal' };
 				}
 				if (jsonData.price >= expensive) {
-					return { ...jsonData, category: "expensive" };
+					return { ...jsonData, category: 'expensive' };
 				}
 			});
-
+			console.log('BRAND NEW DATA:', newData);
 			setFlightData(newData);
 		}
 
@@ -70,13 +79,11 @@ export default function Home() {
 	return (
 		<div>
 			{isPending && (
-				<div className="spinner">
-					<Spinner variant="info" animation="grow" />
+				<div className='spinner'>
+					<Spinner variant='info' animation='grow' />
 				</div>
 			)}
-			{!flightData && !isPending && (
-				<Main/>
-			)}
+			{!flightData && !isPending && <Main />}
 			{countryDataCollection && (
 				<Country countryDataCollection={countryDataCollection} />
 			)}
