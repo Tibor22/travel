@@ -11,6 +11,8 @@ export const useFetchMultiple = (travelData, method = 'GET') => {
 	const [error, setError] = useState(null);
 	const [options, setOptions] = useState(null);
 
+	const airportArr = ['BUD', 'MAD'];
+
 	const postData = (postData) => {
 		setOptions({
 			method: 'GET',
@@ -27,7 +29,7 @@ export const useFetchMultiple = (travelData, method = 'GET') => {
 	) {
 		return fetch(url, {
 			headers: {
-				Authorization: `Bearer 1lAokseUarEGWGoBj0vcSCr7VE9l`,
+				Authorization: 'Bearer kWCRs66FeHEF2AKdX1kzfn0DzPVO',
 			},
 		}).then((response) => {
 			if (!response.ok) {
@@ -51,16 +53,20 @@ export const useFetchMultiple = (travelData, method = 'GET') => {
 			setIsPending(true);
 
 			try {
-				let data = await Promise.all([
-					getJSON(
-						`     https://test.api.amadeus.com/v2/shopping/flight-offers?originLocationCode=LON&destinationLocationCode=BUD&departureDate=2022-11-01&returnDate=2022-11-08&adults=1&nonStop=false&max=10   `
-					),
+				let data = await Promise.all(
+					airportArr.map((airport) => {
+						console.log(airport);
+						return getJSON(
+							`     https://test.api.amadeus.com/v2/shopping/flight-offers?originLocationCode=${travelData.airport.airportCode}&destinationLocationCode=${airport}&departureDate=2022-11-01&returnDate=2022-11-08&adults=1&nonStop=false&max=1`
+						);
+					})
+					// [
 					// getJSON(
-					// 	`https://api.flightapi.io/roundtrip/${API_KEY}/LHR/CDG/${from}/${to}/2/0/0/Economy/GBP`
+					// 	`     https://test.api.amadeus.com/v2/shopping/flight-offers?originLocationCode=${travelData.airport.airportCode}&destinationLocationCode=BUD&departureDate=2022-11-01&returnDate=2022-11-08&adults=1&nonStop=false&max=10   `
 					// ),
-					// getJSON(`https://api.flightapi.io/roundtrip/${API_KEY}/LHR/MAD/${from}/${to}/2/0/0/Economy/GBP`),
-					// getJSON(`https://cors-anywhere.herokuapp.com/https://api.flightapi.io/roundtrip/${API_KEY}/LHR/BER/${from}/${to}/2/0/0/Economy/GBP`),
-				]);
+
+					// ]
+				);
 				console.log('DATA FROM AMADEUS:', data);
 				setIsPending(false);
 				setData(data);

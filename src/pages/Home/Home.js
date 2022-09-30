@@ -23,30 +23,31 @@ export default function Home() {
 	useEffect(() => {
 		if (flightDataCollection === undefined || !data) return;
 		console.log('DATA:', data);
-		data = data[0].data.map((offer) => {
-			return {
-				price: offer.price.total,
-				arrivalCountry: Object.values(data[0].dictionaries.locations)[0]
-					.countryCode,
-				departureCountry: Object.values(data[0].dictionaries.locations)[1]
-					.countryCode,
-				iata: offer.itineraries[0].segments[
-					offer.itineraries[0].segments.length - 1
-				].arrival.iataCode,
-			};
+		data = data.map((data) => {
+			console.log('DATA IN MAP:', data.data);
+			return (data = data.data.map((offer) => {
+				console.log('OFFER:', offer);
+				return {
+					price: offer.price.total,
+					arrivalCountry: Object.values(data.dictionaries.locations)[0]
+						.countryCode,
+					departureCountry: Object.values(data.dictionaries.locations)[1]
+						.countryCode,
+					iata: offer.itineraries[0].segments[
+						offer.itineraries[0].segments.length - 1
+					].arrival.iataCode,
+				};
+			}));
 		});
-
+		data = data.flat();
 		console.log('NEW DATA:', data);
 
 		async function fetchFLights() {
-			// const res = await fetch('http://localhost:3000/flights');
-			// console.log(res);
-			// let jsonData = await res.json();
-			// jsonData = jsonData.concat(data);
-
 			const priceSum = data.reduce((sum, currVal) => {
+				console.log('SUM:', sum, 'CURRENT PRICE:', +currVal.price);
 				return (sum += +currVal.price);
 			}, 0);
+			console.log('PRICE SUM:', priceSum);
 			const avgTravelCost = Math.floor(priceSum / data.length);
 			console.log('AVG TRAVEL COST: ', avgTravelCost);
 			const newData = data.map((jsonData) => {
