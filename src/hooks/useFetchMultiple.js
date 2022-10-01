@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { API_KEY } from '../config/config.js';
 import { TravelDataContext } from '../context/TravelDataContext.js';
 import { useContext } from 'react';
+import { getJSON } from '../utilities/getJSON.js';
 
 console.log(API_KEY);
 
@@ -19,24 +20,6 @@ export const useFetchMultiple = (travelData, method = 'GET') => {
 			headers: {
 				'Content-Type': 'application/json',
 			},
-		});
-	};
-
-	const getJSON = function (
-		url,
-		controller,
-		errorMsg = 'Something went wrong'
-	) {
-		return fetch(url, {
-			headers: {
-				Authorization: 'Bearer kWCRs66FeHEF2AKdX1kzfn0DzPVO',
-			},
-		}).then((response) => {
-			if (!response.ok) {
-				throw new Error(`${errorMsg} ${response.status}`);
-			}
-
-			return response.json();
 		});
 	};
 
