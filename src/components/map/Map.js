@@ -50,36 +50,22 @@ export default function Map({ flightData, setFlightData }) {
 		async function fetchRoute() {
 			setIsPending(true);
 			console.log('DESTINATION:', destination);
+
 			// const data = await getJSON(
-			// 	`https://api.flightapi.io/roundtrip/${API_KEY}/${origin}/${destination.iata}/${from}/${to}/2/0/0/Economy/GBP`
+			// 	`     https://test.api.amadeus.com/v2/shopping/flight-offers?originLocationCode=${origin}&destinationLocationCode=${destination.iata}&departureDate=${from}&returnDate=${to}&adults=1&nonStop=false&max=10`
 			// );
 			const data = await getJSON(
-				`     https://test.api.amadeus.com/v2/shopping/flight-offers?originLocationCode=${origin}&destinationLocationCode=${destination.iata}&departureDate=${from}&returnDate=${to}&adults=1&nonStop=false&max=10`
+				`     http://localhost:8080/v1/flights/flight?origin=${origin}&destination=${destination.iata}&from=${from}&to=${to}`
 			);
 
-			console.log('THE MOST IMPORTANT DATA', data.dictionaries);
+			console.log('THE MOST IMPORTANT DATA', data);
 
-			const flightData = data.data.map((fare) => {
-				// from 2022-10-14 to 221014
-				const dateFormatted = (date) => {
-					const newDate = date.split('-');
-					const lastLetter = newDate[0].charAt(newDate[0].length - 1);
-					const firstLetter = newDate[0].charAt(0);
-					newDate[0] = firstLetter + lastLetter;
-					console.log(newDate.join(''));
-					return newDate.join('');
-				};
-
+			const flightData = data.map((flight) => {
 				return {
-					price: fare.price.total,
-					total: fare.price.total,
-					provider: Object.values(data.dictionaries.carriers)[0],
-					url: `https://www.skyscanner.net/transport/flights/${origin}/${
-						destination.iata
-					}/${dateFormatted(from)}/${dateFormatted(
-						to
-					)}/?adults=2&adultsv2=2&cabinclass=economy&children=0&childrenv2=&destinationentityid=27544850&inboundaltsenabled=false&infants=0&originentityid=27544008&outboundaltsenabled=false&preferdirects=false&ref=home&rtn=1`,
-					tripId: 3,
+					price: flight.price,
+					total: flight.price,
+					provider: flight.provider,
+					url: `https://www.kayak.co.uk/flights/${origin}-${destination.iata}/${from}/${to}?sort=price_a&fs=stops=0`,
 				};
 			});
 			setIsPending(false);
