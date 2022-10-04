@@ -43,12 +43,6 @@ export const useFetchMultiple = (travelData, method = 'GET') => {
 							`     https://test.api.amadeus.com/v2/shopping/flight-offers?originLocationCode=${travelData.airport.airportCode}&destinationLocationCode=${airport}&departureDate=${from}&returnDate=${to}&adults=1&nonStop=false&max=1`
 						);
 					})
-					// [
-					// getJSON(
-					// 	`     https://test.api.amadeus.com/v2/shopping/flight-offers?originLocationCode=${travelData.airport.airportCode}&destinationLocationCode=BUD&departureDate=2022-11-01&returnDate=2022-11-08&adults=1&nonStop=false&max=10   `
-					// ),
-
-					// ]
 				);
 				console.log('DATA FROM AMADEUS:', data);
 				setIsPending(false);

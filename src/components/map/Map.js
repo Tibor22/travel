@@ -38,6 +38,11 @@ export default function Map({ flightData, setFlightData }) {
 		popupAnchor: [0, -71], // point from which the popup should open relative to the iconAnchor
 	});
 
+	const iataMap = {
+		ITA: 'FCO',
+		FIN: 'HEL',
+	};
+
 	L.Marker.prototype.options.icon = DefaultIcon;
 
 	console.log(destination);
@@ -55,7 +60,7 @@ export default function Map({ flightData, setFlightData }) {
 			// 	`     https://test.api.amadeus.com/v2/shopping/flight-offers?originLocationCode=${origin}&destinationLocationCode=${destination.iata}&departureDate=${from}&returnDate=${to}&adults=1&nonStop=false&max=10`
 			// );
 			const data = await getJSON(
-				`     http://localhost:8080/v1/flights/flight?origin=${origin}&destination=${destination.iata}&from=${from}&to=${to}`
+				`     http://localhost:4000/v1/flights/flight?origin=${origin}&destination=${destination.iata}&from=${from}&to=${to}`
 			);
 
 			console.log('THE MOST IMPORTANT DATA', data);
@@ -88,13 +93,15 @@ export default function Map({ flightData, setFlightData }) {
 		});
 	}
 	function onEachCountry(country, layer) {
-		// console.log('COUNTRY:', country);
+		console.log('COUNTRY:', country.properties.adm0_a3);
 		const currentCheapestFlight = flightData.filter((flight) => {
 			if (country.properties.iso_a2 === flight.arrivalCountry) return true;
 		});
 		console.log('CurrCheapFLight:', currentCheapestFlight[0]);
 		country.category = currentCheapestFlight[0]?.category;
-		country.iata = currentCheapestFlight[0]?.iata;
+		// this is where need to give all IATA
+		country.iata =
+			currentCheapestFlight[0]?.iata || iataMap[country.properties.adm0_a3];
 		const countryName = country.properties.admin;
 		layer.bindPopup(countryName);
 		layer.on({
