@@ -1,18 +1,10 @@
-import {
-	MapContainer,
-	TileLayer,
-	useMap,
-	Marker,
-	Popup,
-	GeoJSON,
-} from 'react-leaflet';
+import { MapContainer, Marker, Popup, GeoJSON } from 'react-leaflet';
 import { europeData } from '../../Data/europeData.js';
 import { useState, useEffect } from 'react';
 import { TravelDataContext } from '../../context/TravelDataContext.js';
 import { useContext } from 'react';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
-import { API_KEY } from '../../config/config.js';
 import Spinner from 'react-bootstrap/Spinner';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './Map.css';
@@ -56,9 +48,6 @@ export default function Map({ flightData, setFlightData }) {
 			setIsPending(true);
 			console.log('DESTINATION:', destination);
 
-			// const data = await getJSON(
-			// 	`     https://test.api.amadeus.com/v2/shopping/flight-offers?originLocationCode=${origin}&destinationLocationCode=${destination.iata}&departureDate=${from}&returnDate=${to}&adults=1&nonStop=false&max=10`
-			// );
 			const data = await getJSON(
 				`     http://localhost:4000/v1/flights/flight?origin=${origin}&destination=${destination.iata}&from=${from}&to=${to}`
 			);

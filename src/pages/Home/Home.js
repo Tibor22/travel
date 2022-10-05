@@ -7,17 +7,15 @@ import Spinner from 'react-bootstrap/Spinner';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './Home.css';
 import Country from '../../components/Country/Country.js';
-import bike from '../../assets/bike.jpg';
-import fly from '../../assets/fly.jpg';
-import greece from '../../assets/greece.jpg';
 import Main from '../../components/Main/Main.js';
 
 export default function Home() {
 	const [flightData, setFlightData] = useState(null);
 	const { flightDataCollection, countryDataCollection, dispatch } =
 		useContext(TravelDataContext);
-	let { data, isPending, error } = useFetchMultiple(flightDataCollection);
+	console.log('DATA', flightDataCollection);
 
+	let { data, isPending, error } = useFetchMultiple(flightDataCollection);
 	console.log('COUNTRYDATA COLLECTIOON IN HOME:', countryDataCollection);
 
 	useEffect(() => {
@@ -76,7 +74,12 @@ export default function Home() {
 		fetchFLights();
 	}, [flightDataCollection, data]);
 
-	console.log(flightData);
+	console.log(
+		'FLIGHDATACOLLECTION:',
+		flightDataCollection,
+		'FLIGHTDATA:',
+		flightData
+	);
 	return (
 		<div>
 			{isPending && (
