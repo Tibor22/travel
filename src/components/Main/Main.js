@@ -1,7 +1,6 @@
 import bike from '../../assets/bike.jpg';
 import fly from '../../assets/fly.jpg';
 import greece from '../../assets/greece.jpg';
-import { useEffect } from 'react';
 
 export default function Main() {
 	return (

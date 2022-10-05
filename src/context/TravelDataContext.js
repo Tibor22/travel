@@ -8,6 +8,8 @@ export const travelDataReducer = (state, action) => {
 			return { ...state, flightDataCollection: action.payload };
 		case 'COUNTRY_FOUND':
 			return { ...state, countryDataCollection: action.payload };
+		case 'RESET_SEARCH':
+			return {};
 		default:
 			return state;
 	}

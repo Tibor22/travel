@@ -12,7 +12,7 @@ import iconShadow from 'leaflet/dist/images/marker-shadow.png';
 import plane2 from '../../assets/plane2.png';
 import { getJSON } from '../../utilities/getJSON.js';
 
-export default function Map({ flightData, setFlightData }) {
+export default function Map() {
 	const { flightDataCollection, dispatch } = useContext(TravelDataContext);
 	const [destination, setDestination] = useState(null);
 	const [isPending, setIsPending] = useState(false);
@@ -36,34 +36,26 @@ export default function Map({ flightData, setFlightData }) {
 	};
 
 	L.Marker.prototype.options.icon = DefaultIcon;
-
 	console.log(destination);
-	console.log('FLIGHT DATA:', flightData);
-
 	useEffect(() => {
 		if (destination) {
 			fetchRoute();
 		}
 		async function fetchRoute() {
 			setIsPending(true);
-			console.log('DESTINATION:', destination);
 
 			const data = await getJSON(
 				`     http://localhost:4000/v1/flights/flight?origin=${origin}&destination=${destination.iata}&from=${from}&to=${to}`
 			);
-
-			console.log('THE MOST IMPORTANT DATA', data);
-
 			const flightData = data.map((flight) => {
 				return {
 					price: flight.price,
 					total: flight.price,
 					provider: flight.provider,
-					url: `https://www.kayak.co.uk/flights/${origin}-${destination.iata}/${from}/${to}?sort=price_a&fs=stops=0`,
+					url: `https://www.kayak.co.uk/flights/${origin}-${destination.iata}/${from}/${to}?sort=price_a&fs=stops=1`,
 				};
 			});
 			setIsPending(false);
-			console.log('FLIGHT DATA:', flightData);
 			dispatch({ type: 'COUNTRY_FOUND', payload: flightData });
 		}
 	}, [destination]);
@@ -71,10 +63,7 @@ export default function Map({ flightData, setFlightData }) {
 	async function chooseCountry(event) {
 		console.log(event);
 		console.log(event.target.feature.properties.iso_a2);
-		event.target.setStyle({
-			color: 'green',
-			fillOpacity: 1,
-		});
+
 		setDestination({
 			country_a2: event.target.feature.properties.iso_a2,
 			countryName: event.target.feature.properties.admin,
@@ -82,15 +71,14 @@ export default function Map({ flightData, setFlightData }) {
 		});
 	}
 	function onEachCountry(country, layer) {
-		console.log('COUNTRY:', country.properties.adm0_a3);
-		const currentCheapestFlight = flightData.filter((flight) => {
-			if (country.properties.iso_a2 === flight.arrivalCountry) return true;
-		});
-		console.log('CurrCheapFLight:', currentCheapestFlight[0]);
-		country.category = currentCheapestFlight[0]?.category;
-		// this is where need to give all IATA
-		country.iata =
-			currentCheapestFlight[0]?.iata || iataMap[country.properties.adm0_a3];
+		if (
+			country.properties.iso_a2 === flightDataCollection.airport.countryCode
+		) {
+			country.category = 'origin';
+		} else if (country.properties.iso_a2 === destination?.country_a2) {
+			country.category = 'destination';
+		} else country.category = 'rest';
+		country.iata = iataMap[country.properties.adm0_a3] || null;
 		const countryName = country.properties.admin;
 		layer.bindPopup(countryName);
 		layer.on({
@@ -108,14 +96,14 @@ export default function Map({ flightData, setFlightData }) {
 	};
 	function getColor(category) {
 		switch (category) {
-			case 'cheap':
+			case 'origin':
 				return '#39FF14';
 				break;
-			case 'normal':
-				return '#1e71f6';
+			case 'rest':
+				return '#add8e6';
 				break;
-			case 'expensive':
-				return '#BD0026';
+			case 'destination':
+				return '#fd3';
 				break;
 			default:
 				return '#FFEDA0';
@@ -155,16 +143,4 @@ export default function Map({ flightData, setFlightData }) {
 			</MapContainer>
 		</>
 	);
-}
-
-{
-	/* <TileLayer
-attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-        />
-    <Marker position={[51.505, -0.09]}>
-        <Popup>
-  A pretty CSS3 popup. <br /> Easily customizable.
-        </Popup>
-    </Marker>  */
 }

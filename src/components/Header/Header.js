@@ -45,9 +45,14 @@ export default function Header() {
 		});
 	};
 
+	const resetSearch = () => {
+		dispatch({ type: 'RESET_SEARCH', payload: {} });
+	};
+
 	return (
 		<div className='header'>
 			<img
+				onClick={resetSearch}
 				src='https://www.kindpng.com/picc/m/537-5375857_travel-and-tour-logo-hd-png-download.png'
 				style={{ width: '60px', marginLeft: '1rem', cursor: 'pointer' }}
 				alt=''
