@@ -161,11 +161,14 @@ export default function Map() {
 			{isPending && (
 				<div className='spinnerMap'>
 					<Spinner variant='info' animation='grow' />
+					Loading data may take a little while..
 				</div>
 			)}
-			<div className='info-container'>
-				Click on the Map to choose you Destination
-			</div>
+			{!isPending && (
+				<div className='info-container'>
+					Click on the Map to choose you Destination
+				</div>
+			)}
 			{!isPending && (
 				<MapContainer
 					style={{ height: 'calc(100vh - 5rem) ' }}

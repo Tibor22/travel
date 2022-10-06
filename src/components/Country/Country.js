@@ -28,10 +28,14 @@ export default function Country({ countryDataCollection }) {
 						if (
 							country.provider === 'Sorry no flights available for your date'
 						) {
-							return <li className='slider__list--item'>{country.provider}</li>;
+							return (
+								<li key={i} className='slider__list--item'>
+									{country.provider}
+								</li>
+							);
 						} else {
 							return (
-								<li className='slider__list--item'>
+								<li key={i} className='slider__list--item'>
 									<div className='flex-first'>
 										<span>{i + 1}</span>
 										<span>{country.provider}</span>

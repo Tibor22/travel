@@ -26,7 +26,7 @@ export default function Header() {
 					from: range2[0],
 					to: range2[1],
 				};
-				console.log(time);
+
 				setFormData({ ...formData, from: time.from, to: time.to });
 			}
 			createRange();

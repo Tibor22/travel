@@ -1,4 +1,4 @@
-import { createContext, useReducer, useEffect } from 'react';
+import { createContext, useReducer } from 'react';
 
 export const TravelDataContext = createContext();
 
@@ -17,7 +17,6 @@ export const travelDataReducer = (state, action) => {
 
 export const TravelDataProvider = ({ children }) => {
 	const [state, dispatch] = useReducer(travelDataReducer, {});
-	console.log('UPDATED STATE:', state);
 	return (
 		<TravelDataContext.Provider value={{ ...state, dispatch }}>
 			{children}
