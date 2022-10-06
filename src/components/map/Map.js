@@ -11,14 +11,12 @@ import './Map.css';
 import iconShadow from 'leaflet/dist/images/marker-shadow.png';
 import plane2 from '../../assets/plane2.png';
 import { getJSON } from '../../utilities/getJSON.js';
-import ReactModal from 'react-modal';
 
 export default function Map() {
 	const { flightDataCollection, dispatch } = useContext(TravelDataContext);
 	const [destination, setDestination] = useState(null);
 	const [isPending, setIsPending] = useState(false);
 
-	console.log('STATE IN MAP:', flightDataCollection);
 	const from = flightDataCollection.from;
 	const to = flightDataCollection.to;
 	const origin = flightDataCollection.airport.airportCode;
@@ -49,7 +47,6 @@ export default function Map() {
 			const data = await getJSON(
 				`     http://localhost:4000/v1/flights/flight?origin=${origin}&destination=${destination.iata}&from=${from}&to=${to}`
 			);
-			console.log('DATA:', data);
 			if (data.length === 0) {
 				flightData = [
 					{
@@ -133,6 +130,9 @@ export default function Map() {
 					<Spinner variant='info' animation='grow' />
 				</div>
 			)}
+			<div className='info-container'>
+				Click on the Map to choose you Destination
+			</div>
 			{!isPending && (
 				<MapContainer
 					style={{ height: 'calc(100vh - 5rem) ' }}
