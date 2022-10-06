@@ -80,9 +80,10 @@ export default function Map() {
 			setIsPending(true);
 			let flightData;
 
-			const data = await getJSON(
+			let data = await getJSON(
 				`     http://localhost:4000/v1/flights/flight?origin=${origin}&destination=${destination.iata}&from=${from}&to=${to}`
 			);
+
 			if (data.length === 0) {
 				flightData = [
 					{
@@ -95,7 +96,7 @@ export default function Map() {
 						price: flight.price,
 						total: flight.price,
 						provider: flight.provider,
-						url: `https://www.kayak.co.uk/flights/${origin}-${destination.iata}/${from}/${to}?sort=price_a&fs=stops=1`,
+						url: `https://www.kayak.co.uk/flights/${origin}-${destination.iata}/${from}/${to}?sort=price_a&fs=stops=-2`,
 					};
 				});
 			}
@@ -121,7 +122,7 @@ export default function Map() {
 			dashArray: '',
 			fillOpacity: 0.7,
 		});
-
+		layer.bindPopup('Hungary');
 		layer.bringToFront();
 	};
 
@@ -134,6 +135,7 @@ export default function Map() {
 			weight: 2,
 		});
 	};
+
 	function onEachCountry(country, layer) {
 		if (
 			country.properties.iso_a2 === flightDataCollection.airport.countryCode
