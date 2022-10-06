@@ -32,10 +32,46 @@ export default function Map() {
 	const iataMap = {
 		ITA: 'FCO',
 		FIN: 'HEL',
+		BEL: 'BRU',
+		BIH: 'SJJ',
+		BLR: 'MSQ',
+		CZE: 'PRG',
+		BGR: 'SOF',
+		ALB: 'TIA',
+		AUT: 'VIE',
+		CHE: 'ZRH',
+		DNK: 'CPH',
+		DEU: 'FRA',
+		HUN: 'BUD',
+		FRA: 'CDG',
+		ESP: 'MAD',
+		GBR: 'LHR',
+		EST: 'TLL',
+		ISL: 'KEF',
+		GRC: 'ATH',
+		HRV: 'ZAG',
+		IRL: 'DUB',
+		KOS: 'PRN',
+		LTU: 'VNO',
+		LUX: 'LUX',
+		LVA: 'RIX',
+		MDA: 'KIV',
+		MKD: 'SKP',
+		MNE: 'TGD',
+		NLD: 'AMS',
+		NOR: 'OSL',
+		SVK: 'BTS',
+		POL: 'WAW',
+		PRT: 'LIS',
+		ROU: 'OTP',
+		RUS: 'SVO',
+		SRB: 'BEG',
+		SVN: 'LJU',
+		SWE: 'ARN',
+		UKR: 'KBP',
 	};
 
 	L.Marker.prototype.options.icon = DefaultIcon;
-	console.log(destination);
 	useEffect(() => {
 		if (destination) {
 			fetchRoute();
@@ -70,9 +106,6 @@ export default function Map() {
 	}, [destination]);
 
 	async function chooseCountry(event) {
-		console.log(event);
-		console.log(event.target.feature.properties.iso_a2);
-
 		setDestination({
 			country_a2: event.target.feature.properties.iso_a2,
 			countryName: event.target.feature.properties.admin,

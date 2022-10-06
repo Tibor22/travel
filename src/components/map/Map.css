@@ -12,7 +12,7 @@
 	position: absolute;
 	background-color: #ffeda0;
 	padding: 0.3rem 1rem 0.3rem 1rem;
-	z-index: 99999999;
+	z-index: 99999;
 	font-size: 1.5rem;
 	top: calc(0 - 80px);
 	left: 50%;

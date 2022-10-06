@@ -1,6 +1,4 @@
 .search__container {
-	/* padding-top: 64px; */
-	/* width: 40vw; */
 	margin-right: 1.5rem;
 	position: relative;
 }
@@ -64,7 +62,6 @@
 }
 
 .search_suggestions {
-	/* height: 10rem; */
 	display: grid;
 	position: absolute;
 	width: 70%;
@@ -73,7 +70,7 @@
 	overflow-y: scroll;
 
 	background-color: white;
-	z-index: 99999;
+	z-index: 999999;
 	scrollbar-color: #6969dd #e0e0e0;
 	scrollbar-width: thin;
 }
