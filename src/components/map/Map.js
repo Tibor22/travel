@@ -11,6 +11,7 @@ import './Map.css';
 import iconShadow from 'leaflet/dist/images/marker-shadow.png';
 import plane2 from '../../assets/plane2.png';
 import { getJSON } from '../../utilities/getJSON.js';
+import ReactModal from 'react-modal';
 
 export default function Map() {
 	const { flightDataCollection, dispatch } = useContext(TravelDataContext);
@@ -43,18 +44,29 @@ export default function Map() {
 		}
 		async function fetchRoute() {
 			setIsPending(true);
+			let flightData;
 
 			const data = await getJSON(
 				`     http://localhost:4000/v1/flights/flight?origin=${origin}&destination=${destination.iata}&from=${from}&to=${to}`
 			);
-			const flightData = data.map((flight) => {
-				return {
-					price: flight.price,
-					total: flight.price,
-					provider: flight.provider,
-					url: `https://www.kayak.co.uk/flights/${origin}-${destination.iata}/${from}/${to}?sort=price_a&fs=stops=1`,
-				};
-			});
+			console.log('DATA:', data);
+			if (data.length === 0) {
+				flightData = [
+					{
+						provider: 'Sorry no flights available for your date',
+					},
+				];
+			} else {
+				flightData = data.map((flight) => {
+					return {
+						price: flight.price,
+						total: flight.price,
+						provider: flight.provider,
+						url: `https://www.kayak.co.uk/flights/${origin}-${destination.iata}/${from}/${to}?sort=price_a&fs=stops=1`,
+					};
+				});
+			}
+
 			setIsPending(false);
 			dispatch({ type: 'COUNTRY_FOUND', payload: flightData });
 		}
@@ -121,26 +133,28 @@ export default function Map() {
 					<Spinner variant='info' animation='grow' />
 				</div>
 			)}
-			<MapContainer
-				style={{ height: 'calc(100vh - 5rem) ' }}
-				id={'mapbox/light-v9'}
-				center={[53.988337, 13.861923]}
-				zoom={3.7}
-			>
-				{flightDataCollection && (
-					<Marker position={position}>
-						<Popup>
-							A pretty CSS3 popup. <br /> Easily customizable.
-						</Popup>
-					</Marker>
-				)}
+			{!isPending && (
+				<MapContainer
+					style={{ height: 'calc(100vh - 5rem) ' }}
+					id={'mapbox/light-v9'}
+					center={[53.988337, 13.861923]}
+					zoom={3.7}
+				>
+					{flightDataCollection && (
+						<Marker position={position}>
+							<Popup>
+								A pretty CSS3 popup. <br /> Easily customizable.
+							</Popup>
+						</Marker>
+					)}
 
-				<GeoJSON
-					style={countryStyle}
-					data={europeData.features}
-					onEachFeature={onEachCountry}
-				/>
-			</MapContainer>
+					<GeoJSON
+						style={countryStyle}
+						data={europeData.features}
+						onEachFeature={onEachCountry}
+					/>
+				</MapContainer>
+			)}
 		</>
 	);
 }

@@ -4,7 +4,6 @@ import DatePickerForm from '../DatePicker/DatePicker.js';
 import Search from '../Search/Search.js';
 import { TravelDataContext } from '../../context/TravelDataContext.js';
 import { useContext } from 'react';
-import { Link } from 'react-router-dom';
 
 export default function Header() {
 	const { dispatch } = useContext(TravelDataContext);
@@ -50,24 +49,26 @@ export default function Header() {
 	};
 
 	return (
-		<div className='header'>
-			<img
-				onClick={resetSearch}
-				src='https://www.kindpng.com/picc/m/537-5375857_travel-and-tour-logo-hd-png-download.png'
-				style={{ width: '60px', marginLeft: '1rem', cursor: 'pointer' }}
-				alt=''
-			/>
-
-			<form onSubmit={handleSubmit}>
-				<Search formData={formData} setFormData={setFormData} />
-				<DatePickerForm
-					range={range}
-					setRange={setRange}
-					formData={formData}
-					setFormData={setFormData}
+		<div className='header-container'>
+			<div className='header'>
+				<img
+					onClick={resetSearch}
+					src='https://www.kindpng.com/picc/m/537-5375857_travel-and-tour-logo-hd-png-download.png'
+					style={{ width: '60px', marginLeft: '1rem', cursor: 'pointer' }}
+					alt=''
 				/>
-				<button type='submit'>Search</button>
-			</form>
+
+				<form onSubmit={handleSubmit}>
+					<Search formData={formData} setFormData={setFormData} />
+					<DatePickerForm
+						range={range}
+						setRange={setRange}
+						formData={formData}
+						setFormData={setFormData}
+					/>
+					<button type='submit'>Search</button>
+				</form>
+			</div>
 		</div>
 	);
 }
