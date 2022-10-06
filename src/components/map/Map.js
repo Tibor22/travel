@@ -3,7 +3,7 @@ import { europeData } from '../../Data/europeData.js';
 import { useState, useEffect } from 'react';
 import { TravelDataContext } from '../../context/TravelDataContext.js';
 import { useContext } from 'react';
-import L from 'leaflet';
+import L, { geoJSON } from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import Spinner from 'react-bootstrap/Spinner';
 import 'bootstrap/dist/css/bootstrap.min.css';
@@ -112,6 +112,28 @@ export default function Map() {
 			iata: event.target.feature.iata,
 		});
 	}
+
+	const highlightFeature = (e) => {
+		let layer = e.target;
+		layer.setStyle({
+			weight: 5,
+			color: '#666',
+			dashArray: '',
+			fillOpacity: 0.7,
+		});
+
+		layer.bringToFront();
+	};
+
+	const resetHighlight = (e) => {
+		let layer = e.target;
+
+		layer.setStyle({
+			fillOpacity: 1,
+			color: 'black',
+			weight: 2,
+		});
+	};
 	function onEachCountry(country, layer) {
 		if (
 			country.properties.iso_a2 === flightDataCollection.airport.countryCode
@@ -125,6 +147,8 @@ export default function Map() {
 		layer.bindPopup(countryName);
 		layer.on({
 			click: chooseCountry,
+			mouseover: highlightFeature,
+			mouseout: resetHighlight,
 		});
 	}
 
@@ -166,7 +190,7 @@ export default function Map() {
 			)}
 			{!isPending && (
 				<div className='info-container'>
-					Click on the Map to choose you Destination
+					Click on the Map to choose your Destination
 				</div>
 			)}
 			{!isPending && (
