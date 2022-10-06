@@ -1,18 +1,10 @@
-import {
-	MapContainer,
-	TileLayer,
-	useMap,
-	Marker,
-	Popup,
-	GeoJSON,
-} from 'react-leaflet';
+import { MapContainer, Marker, Popup, GeoJSON } from 'react-leaflet';
 import { europeData } from '../../Data/europeData.js';
 import { useState, useEffect } from 'react';
 import { TravelDataContext } from '../../context/TravelDataContext.js';
 import { useContext } from 'react';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
-import { API_KEY } from '../../config/config.js';
 import Spinner from 'react-bootstrap/Spinner';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './Map.css';
@@ -20,12 +12,11 @@ import iconShadow from 'leaflet/dist/images/marker-shadow.png';
 import plane2 from '../../assets/plane2.png';
 import { getJSON } from '../../utilities/getJSON.js';
 
-export default function Map({ flightData, setFlightData }) {
+export default function Map() {
 	const { flightDataCollection, dispatch } = useContext(TravelDataContext);
 	const [destination, setDestination] = useState(null);
 	const [isPending, setIsPending] = useState(false);
 
-	console.log('STATE IN MAP:', flightDataCollection);
 	const from = flightDataCollection.from;
 	const to = flightDataCollection.to;
 	const origin = flightDataCollection.airport.airportCode;
@@ -41,51 +32,80 @@ export default function Map({ flightData, setFlightData }) {
 	const iataMap = {
 		ITA: 'FCO',
 		FIN: 'HEL',
+		BEL: 'BRU',
+		BIH: 'SJJ',
+		BLR: 'MSQ',
+		CZE: 'PRG',
+		BGR: 'SOF',
+		ALB: 'TIA',
+		AUT: 'VIE',
+		CHE: 'ZRH',
+		DNK: 'CPH',
+		DEU: 'FRA',
+		HUN: 'BUD',
+		FRA: 'CDG',
+		ESP: 'MAD',
+		GBR: 'LHR',
+		EST: 'TLL',
+		ISL: 'KEF',
+		GRC: 'ATH',
+		HRV: 'ZAG',
+		IRL: 'DUB',
+		KOS: 'PRN',
+		LTU: 'VNO',
+		LUX: 'LUX',
+		LVA: 'RIX',
+		MDA: 'KIV',
+		MKD: 'SKP',
+		MNE: 'TGD',
+		NLD: 'AMS',
+		NOR: 'OSL',
+		SVK: 'BTS',
+		POL: 'WAW',
+		PRT: 'LIS',
+		ROU: 'OTP',
+		RUS: 'SVO',
+		SRB: 'BEG',
+		SVN: 'LJU',
+		SWE: 'ARN',
+		UKR: 'KBP',
 	};
 
 	L.Marker.prototype.options.icon = DefaultIcon;
-
-	console.log(destination);
-	console.log('FLIGHT DATA:', flightData);
-
 	useEffect(() => {
 		if (destination) {
 			fetchRoute();
 		}
 		async function fetchRoute() {
 			setIsPending(true);
-			console.log('DESTINATION:', destination);
+			let flightData;
 
-			// const data = await getJSON(
-			// 	`     https://test.api.amadeus.com/v2/shopping/flight-offers?originLocationCode=${origin}&destinationLocationCode=${destination.iata}&departureDate=${from}&returnDate=${to}&adults=1&nonStop=false&max=10`
-			// );
 			const data = await getJSON(
 				`     http://localhost:4000/v1/flights/flight?origin=${origin}&destination=${destination.iata}&from=${from}&to=${to}`
 			);
+			if (data.length === 0) {
+				flightData = [
+					{
+						provider: 'Sorry no flights available for your date',
+					},
+				];
+			} else {
+				flightData = data.map((flight) => {
+					return {
+						price: flight.price,
+						total: flight.price,
+						provider: flight.provider,
+						url: `https://www.kayak.co.uk/flights/${origin}-${destination.iata}/${from}/${to}?sort=price_a&fs=stops=1`,
+					};
+				});
+			}
 
-			console.log('THE MOST IMPORTANT DATA', data);
-
-			const flightData = data.map((flight) => {
-				return {
-					price: flight.price,
-					total: flight.price,
-					provider: flight.provider,
-					url: `https://www.kayak.co.uk/flights/${origin}-${destination.iata}/${from}/${to}?sort=price_a&fs=stops=0`,
-				};
-			});
 			setIsPending(false);
-			console.log('FLIGHT DATA:', flightData);
 			dispatch({ type: 'COUNTRY_FOUND', payload: flightData });
 		}
 	}, [destination]);
 
 	async function chooseCountry(event) {
-		console.log(event);
-		console.log(event.target.feature.properties.iso_a2);
-		event.target.setStyle({
-			color: 'green',
-			fillOpacity: 1,
-		});
 		setDestination({
 			country_a2: event.target.feature.properties.iso_a2,
 			countryName: event.target.feature.properties.admin,
@@ -93,15 +113,14 @@ export default function Map({ flightData, setFlightData }) {
 		});
 	}
 	function onEachCountry(country, layer) {
-		console.log('COUNTRY:', country.properties.adm0_a3);
-		const currentCheapestFlight = flightData.filter((flight) => {
-			if (country.properties.iso_a2 === flight.arrivalCountry) return true;
-		});
-		console.log('CurrCheapFLight:', currentCheapestFlight[0]);
-		country.category = currentCheapestFlight[0]?.category;
-		// this is where need to give all IATA
-		country.iata =
-			currentCheapestFlight[0]?.iata || iataMap[country.properties.adm0_a3];
+		if (
+			country.properties.iso_a2 === flightDataCollection.airport.countryCode
+		) {
+			country.category = 'origin';
+		} else if (country.properties.iso_a2 === destination?.country_a2) {
+			country.category = 'destination';
+		} else country.category = 'rest';
+		country.iata = iataMap[country.properties.adm0_a3] || null;
 		const countryName = country.properties.admin;
 		layer.bindPopup(countryName);
 		layer.on({
@@ -119,14 +138,14 @@ export default function Map({ flightData, setFlightData }) {
 	};
 	function getColor(category) {
 		switch (category) {
-			case 'cheap':
+			case 'origin':
 				return '#39FF14';
 				break;
-			case 'normal':
-				return '#1e71f6';
+			case 'rest':
+				return '#add8e6';
 				break;
-			case 'expensive':
-				return '#BD0026';
+			case 'destination':
+				return '#fd3';
 				break;
 			default:
 				return '#FFEDA0';
@@ -144,38 +163,31 @@ export default function Map({ flightData, setFlightData }) {
 					<Spinner variant='info' animation='grow' />
 				</div>
 			)}
-			<MapContainer
-				style={{ height: 'calc(100vh - 5rem) ' }}
-				id={'mapbox/light-v9'}
-				center={[53.988337, 13.861923]}
-				zoom={3.7}
-			>
-				{flightDataCollection && (
-					<Marker position={position}>
-						<Popup>
-							A pretty CSS3 popup. <br /> Easily customizable.
-						</Popup>
-					</Marker>
-				)}
+			<div className='info-container'>
+				Click on the Map to choose you Destination
+			</div>
+			{!isPending && (
+				<MapContainer
+					style={{ height: 'calc(100vh - 5rem) ' }}
+					id={'mapbox/light-v9'}
+					center={[53.988337, 13.861923]}
+					zoom={3.7}
+				>
+					{flightDataCollection && (
+						<Marker position={position}>
+							<Popup>
+								A pretty CSS3 popup. <br /> Easily customizable.
+							</Popup>
+						</Marker>
+					)}
 
-				<GeoJSON
-					style={countryStyle}
-					data={europeData.features}
-					onEachFeature={onEachCountry}
-				/>
-			</MapContainer>
+					<GeoJSON
+						style={countryStyle}
+						data={europeData.features}
+						onEachFeature={onEachCountry}
+					/>
+				</MapContainer>
+			)}
 		</>
 	);
-}
-
-{
-	/* <TileLayer
-attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-        />
-    <Marker position={[51.505, -0.09]}>
-        <Popup>
-  A pretty CSS3 popup. <br /> Easily customizable.
-        </Popup>
-    </Marker>  */
 }
