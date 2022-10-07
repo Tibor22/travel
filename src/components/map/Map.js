@@ -12,13 +12,12 @@ import { TravelDataContext } from '../../context/TravelDataContext.js';
 import { useContext } from 'react';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
-import { API_KEY } from '../../config/config.js';
 import Spinner from 'react-bootstrap/Spinner';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './Map.css';
 import iconShadow from 'leaflet/dist/images/marker-shadow.png';
 import plane2 from '../../assets/plane2.png';
-import { getJSON } from '../../utilities/getJSON.js';
+import axios from 'axios';
 
 export default function Map({ flightData, setFlightData }) {
 	const { flightDataCollection, dispatch } = useContext(TravelDataContext);
@@ -42,6 +41,47 @@ export default function Map({ flightData, setFlightData }) {
 
 	console.log(destination);
 	console.log('FLIGHT DATA:', flightData);
+	const iataMap = {
+		ITA: 'FCO',
+		FIN: 'HEL',
+		BEL: 'BRU',
+		BIH: 'SJJ',
+		BLR: 'MSQ',
+		CZE: 'PRG',
+		BGR: 'SOF',
+		ALB: 'TIA',
+		AUT: 'VIE',
+		CHE: 'ZRH',
+		DNK: 'CPH',
+		DEU: 'FRA',
+		HUN: 'BUD',
+		FRA: 'CDG',
+		ESP: 'MAD',
+		GBR: 'LHR',
+		EST: 'TLL',
+		ISL: 'KEF',
+		GRC: 'ATH',
+		HRV: 'ZAG',
+		IRL: 'DUB',
+		KOS: 'PRN',
+		LTU: 'VNO',
+		LUX: 'LUX',
+		LVA: 'RIX',
+		MDA: 'KIV',
+		MKD: 'SKP',
+		MNE: 'TGD',
+		NLD: 'AMS',
+		NOR: 'OSL',
+		SVK: 'BTS',
+		POL: 'WAW',
+		PRT: 'LIS',
+		ROU: 'OTP',
+		RUS: 'SVO',
+		SRB: 'BEG',
+		SVN: 'LJU',
+		SWE: 'ARN',
+		UKR: 'KBP',
+	};
 
 	useEffect(() => {
 		if (destination) {
@@ -53,13 +93,19 @@ export default function Map({ flightData, setFlightData }) {
 			// const data = await getJSON(
 			// 	`https://api.flightapi.io/roundtrip/${API_KEY}/${origin}/${destination.iata}/${from}/${to}/2/0/0/Economy/GBP`
 			// );
-			const data = await getJSON(
-				`     https://test.api.amadeus.com/v2/shopping/flight-offers?originLocationCode=${origin}&destinationLocationCode=${destination.iata}&departureDate=${from}&returnDate=${to}&adults=1&nonStop=false&max=10`
+			const data = await axios.get(
+				`     https://test.api.amadeus.com/v2/shopping/flight-offers?originLocationCode=${origin}&destinationLocationCode=${destination.iata}&departureDate=${from}&returnDate=${to}&adults=1&nonStop=false&max=10`,
+				{
+					headers: {
+						Authorization: `Bearer rxJ3qce1BjsGFWNUH8vOTnGWK6m7`,
+					},
+				}
 			);
+			console.log('DATA', data);
 
-			console.log('THE MOST IMPORTANT DATA', data.dictionaries);
+			console.log('THE MOST IMPORTANT DATA', data.data.dictionaries);
 
-			const flightData = data.data.map((fare) => {
+			const flightData = data.data.data.map((fare) => {
 				// from 2022-10-14 to 221014
 				const dateFormatted = (date) => {
 					const newDate = date.split('-');
@@ -87,6 +133,27 @@ export default function Map({ flightData, setFlightData }) {
 			dispatch({ type: 'COUNTRY_FOUND', payload: flightData });
 		}
 	}, [destination]);
+	const highlightFeature = (e) => {
+		let layer = e.target;
+		layer.setStyle({
+			weight: 5,
+			color: '#666',
+			dashArray: '',
+			fillOpacity: 0.7,
+		});
+		layer.bindPopup('Hungary');
+		layer.bringToFront();
+	};
+
+	const resetHighlight = (e) => {
+		let layer = e.target;
+
+		layer.setStyle({
+			fillOpacity: 1,
+			color: 'black',
+			weight: 2,
+		});
+	};
 
 	async function chooseCountry(event) {
 		console.log(event);
@@ -102,17 +169,20 @@ export default function Map({ flightData, setFlightData }) {
 		});
 	}
 	function onEachCountry(country, layer) {
-		// console.log('COUNTRY:', country);
-		const currentCheapestFlight = flightData.filter((flight) => {
-			if (country.properties.iso_a2 === flight.arrivalCountry) return true;
-		});
-		console.log('CurrCheapFLight:', currentCheapestFlight[0]);
-		country.category = currentCheapestFlight[0]?.category;
-		country.iata = currentCheapestFlight[0]?.iata;
+		if (
+			country.properties.iso_a2 === flightDataCollection.airport.countryCode
+		) {
+			country.category = 'origin';
+		} else if (country.properties.iso_a2 === destination?.country_a2) {
+			country.category = 'destination';
+		} else country.category = 'rest';
+		country.iata = iataMap[country.properties.adm0_a3] || null;
 		const countryName = country.properties.admin;
 		layer.bindPopup(countryName);
 		layer.on({
 			click: chooseCountry,
+			mouseover: highlightFeature,
+			mouseout: resetHighlight,
 		});
 	}
 
@@ -126,14 +196,14 @@ export default function Map({ flightData, setFlightData }) {
 	};
 	function getColor(category) {
 		switch (category) {
-			case 'cheap':
+			case 'origin':
 				return '#39FF14';
 				break;
-			case 'normal':
-				return '#1e71f6';
+			case 'rest':
+				return '#add8e6';
 				break;
-			case 'expensive':
-				return '#BD0026';
+			case 'destination':
+				return '#fd3';
 				break;
 			default:
 				return '#FFEDA0';
