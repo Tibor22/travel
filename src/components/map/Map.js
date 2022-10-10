@@ -11,6 +11,7 @@ import './Map.css';
 import iconShadow from 'leaflet/dist/images/marker-shadow.png';
 import plane2 from '../../assets/plane2.png';
 import axios from 'axios';
+import qs from 'qs';
 import { iataMap } from '../../Data/countriesIATA.js';
 
 export default function Map() {
@@ -39,12 +40,25 @@ export default function Map() {
 		}
 		async function fetchRoute() {
 			setIsPending(true);
+			const url = 'https://test.api.amadeus.com/v1/security/oauth2/token';
+			const secretData = {
+				grant_type: 'client_credentials',
+				client_id: process.env.REACT_APP_CLIENT_ID,
+				client_secret: process.env.REACT_APP_CLIENT_SECRET,
+			};
+			const options = {
+				method: 'POST',
+				headers: { 'content-type': 'application/x-www-form-urlencoded' },
+				data: qs.stringify(secretData),
+				url,
+			};
+			const api_key = await axios(options);
 
 			const data = await axios.get(
 				`     https://test.api.amadeus.com/v2/shopping/flight-offers?originLocationCode=${origin}&destinationLocationCode=${destination.iata}&departureDate=${from}&returnDate=${to}&adults=1&nonStop=false&max=5`,
 				{
 					headers: {
-						Authorization: `Bearer ZaY3f1LPZncGhEx8LEZg80KKqZAZ`,
+						Authorization: `Bearer ${api_key}`,
 					},
 				}
 			);
