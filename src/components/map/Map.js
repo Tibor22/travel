@@ -48,17 +48,16 @@ export default function Map() {
 			};
 			const options = {
 				method: 'POST',
-				headers: { 'content-type': 'application/x-www-form-urlencoded' },
+				headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
 				data: qs.stringify(secretData),
 				url,
 			};
 			const api_key = await axios(options);
-
 			const data = await axios.get(
 				`     https://test.api.amadeus.com/v2/shopping/flight-offers?originLocationCode=${origin}&destinationLocationCode=${destination.iata}&departureDate=${from}&returnDate=${to}&adults=1&nonStop=false&max=5`,
 				{
 					headers: {
-						Authorization: `Bearer ${api_key}`,
+						Authorization: `Bearer ${api_key.data.access_token}`,
 					},
 				}
 			);

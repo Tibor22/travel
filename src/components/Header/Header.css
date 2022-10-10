@@ -44,3 +44,49 @@ form button:active {
 	-webkit-box-shadow: 5px 9px 9px 0px rgba(0, 0, 0, 0);
 	box-shadow: 5px 9px 9px 0px rgba(0, 0, 0, 0);
 }
+
+@media screen and (max-width: 1200px) {
+	.header-container {
+		flex-direction: column;
+	}
+	.header {
+		margin-top: 2rem;
+		height: auto;
+		flex-direction: column;
+	}
+	form {
+		display: grid;
+		width: 60vw;
+		margin-left: 0rem;
+	}
+
+	form .search__label {
+		width: 100%;
+
+		display: grid;
+	}
+	form .search__input {
+		width: 105%;
+	}
+	form button {
+		margin: 2rem 0rem;
+		width: 30vw;
+		justify-self: center;
+	}
+}
+
+@media screen and (max-width: 500px) {
+	form {
+		display: grid;
+		width: 85vw;
+		margin-left: 0rem;
+	}
+	form .search__input {
+		width: 110%;
+	}
+	form button {
+		margin: 2rem 0rem;
+		width: 85vw;
+		justify-self: center;
+	}
+}

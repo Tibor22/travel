@@ -1,16 +1,8 @@
 import { DatePicker } from 'react-rainbow-components';
 import './DatePicker.css';
-export default function DatePickerForm({
-	range,
-	setRange,
-	formData,
-	setFormData,
-}) {
+export default function DatePickerForm({ range, setRange }) {
 	return (
-		<div
-			className='rainbow-align-content_center rainbow-m-vertical_large rainbow-p-horizontal_small rainbow-m_auto date-container'
-			// style={containerStyles}
-		>
+		<div className='rainbow-align-content_center rainbow-m-vertical_large rainbow-p-horizontal_small rainbow-m_auto date-container '>
 			<label className='date-picker'>
 				<span className='span__header'>Choose your dates:</span>
 				<DatePicker

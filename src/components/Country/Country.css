@@ -79,3 +79,44 @@
 .slider-to-open:hover {
 	background-color: #d9cf85;
 }
+
+@media screen and (max-width: 500px) {
+	.sliderContainer {
+		position: absolute;
+		top: 80%;
+		transform: translateY(-50%);
+		left: -600px;
+		width: 100vw;
+		height: auto;
+		background-color: white;
+		z-index: 9999;
+		-webkit-animation: slide 0.5s forwards;
+		padding: 1rem;
+		animation: slide 0.5s forwards;
+		border-radius: 0px 4px 4px 0px;
+	}
+	.slider-to-open {
+		position: absolute;
+		top: 50%;
+		left: 0%;
+		z-index: 9999;
+		background-color: #fded55;
+		padding: 0.4rem 1rem 0.4rem 0.2rem;
+		font-size: 1.5rem;
+		border-radius: 0px 12px 12px 0px;
+		cursor: pointer;
+	}
+	.slider__ul {
+		padding-left: 0rem;
+	}
+}
+@media screen and (max-width: 350px) {
+	.slider__list--item a {
+		padding: 0.4rem 0.8rem;
+		font-size: 0.9rem;
+	}
+	.slider__list--item span {
+		list-style-type: none;
+		padding: 0.5rem 0.5rem;
+	}
+}
