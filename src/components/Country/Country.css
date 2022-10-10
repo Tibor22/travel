@@ -79,8 +79,6 @@
 .slider-to-open:hover {
 	background-color: #d9cf85;
 }
-<<<<<<< HEAD
-=======
 
 @media screen and (max-width: 500px) {
 	.sliderContainer {
@@ -122,4 +120,3 @@
 		padding: 0.5rem 0.5rem;
 	}
 }
->>>>>>> rehook_with_amadeus

@@ -1,10 +1,5 @@
 import './Country.css';
 import { useState, useEffect } from 'react';
-<<<<<<< HEAD
-export default function Country({ countryDataCollection }) {
-	const [closeSlider, setCloseSlider] = useState(false);
-
-=======
 import { TravelDataContext } from '../../context/TravelDataContext.js';
 import { useContext } from 'react';
 export default function Country({ countryDataCollection }) {
@@ -12,7 +7,6 @@ export default function Country({ countryDataCollection }) {
 	const { flightDataCollection, dispatch } = useContext(TravelDataContext);
 	const from = flightDataCollection.from;
 	const to = flightDataCollection.to;
->>>>>>> rehook_with_amadeus
 	useEffect(() => {
 		setCloseSlider(false);
 	}, [countryDataCollection]);
@@ -31,15 +25,11 @@ export default function Country({ countryDataCollection }) {
 				<div onClick={() => setCloseSlider(!closeSlider)} className='close'>
 					X
 				</div>
-<<<<<<< HEAD
-				<h2>Cheapest flights for your date:</h2>
-=======
 				<h2>
 					Cheapest flights for your date: {from.substring(5, from.length)}{' '}
 					/&nbsp;
 					{to.substring(5, to.length)}
 				</h2>
->>>>>>> rehook_with_amadeus
 				<ul className='slider__ul'>
 					{sortedData &&
 						sortedData.map((country, i) => {

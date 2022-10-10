@@ -62,10 +62,7 @@
 }
 
 .search_suggestions {
-<<<<<<< HEAD
-=======
 	/* height: 10rem; */
->>>>>>> rehook_with_amadeus
 	display: grid;
 	position: absolute;
 	width: 70%;
@@ -74,11 +71,7 @@
 	overflow-y: scroll;
 
 	background-color: white;
-<<<<<<< HEAD
-	z-index: 999999;
-=======
 	z-index: 99999;
->>>>>>> rehook_with_amadeus
 	scrollbar-color: #6969dd #e0e0e0;
 	scrollbar-width: thin;
 }

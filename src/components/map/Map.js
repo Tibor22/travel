@@ -31,85 +31,14 @@ export default function Map() {
 		popupAnchor: [0, -71], // point from which the popup should open relative to the iconAnchor
 	});
 
-<<<<<<< HEAD
-	const iataMap = {
-		ITA: 'FCO',
-		FIN: 'HEL',
-		BEL: 'BRU',
-		BIH: 'SJJ',
-		BLR: 'MSQ',
-		CZE: 'PRG',
-		BGR: 'SOF',
-		ALB: 'TIA',
-		AUT: 'VIE',
-		CHE: 'ZRH',
-		DNK: 'CPH',
-		DEU: 'FRA',
-		HUN: 'BUD',
-		FRA: 'CDG',
-		ESP: 'MAD',
-		GBR: 'LHR',
-		EST: 'TLL',
-		ISL: 'KEF',
-		GRC: 'ATH',
-		HRV: 'ZAG',
-		IRL: 'DUB',
-		KOS: 'PRN',
-		LTU: 'VNO',
-		LUX: 'LUX',
-		LVA: 'RIX',
-		MDA: 'KIV',
-		MKD: 'SKP',
-		MNE: 'TGD',
-		NLD: 'AMS',
-		NOR: 'OSL',
-		SVK: 'BTS',
-		POL: 'WAW',
-		PRT: 'LIS',
-		ROU: 'OTP',
-		RUS: 'SVO',
-		SRB: 'BEG',
-		SVN: 'LJU',
-		SWE: 'ARN',
-		UKR: 'KBP',
-	};
-
-	L.Marker.prototype.options.icon = DefaultIcon;
-=======
 	L.Marker.prototype.options.icon = DefaultIcon;
 
->>>>>>> rehook_with_amadeus
 	useEffect(() => {
 		if (destination) {
 			fetchRoute();
 		}
 		async function fetchRoute() {
 			setIsPending(true);
-<<<<<<< HEAD
-			let flightData;
-
-			let data = await getJSON(
-				`     http://localhost:4000/v1/flights/flight?origin=${origin}&destination=${destination.iata}&from=${from}&to=${to}`
-			);
-
-			if (data.length === 0) {
-				flightData = [
-					{
-						provider: 'Sorry no flights available for your date',
-					},
-				];
-			} else {
-				flightData = data.map((flight) => {
-					return {
-						price: flight.price,
-						total: flight.price,
-						provider: flight.provider,
-						url: `https://www.kayak.co.uk/flights/${origin}-${destination.iata}/${from}/${to}?sort=price_a&fs=stops=-2`,
-					};
-				});
-			}
-
-=======
 			const url = 'https://test.api.amadeus.com/v1/security/oauth2/token';
 			const secretData = {
 				grant_type: 'client_credentials',
@@ -158,7 +87,6 @@ export default function Map() {
 					tripId: 3,
 				};
 			});
->>>>>>> rehook_with_amadeus
 			setIsPending(false);
 			dispatch({ type: 'COUNTRY_FOUND', payload: flightData });
 		}
@@ -186,45 +114,16 @@ export default function Map() {
 	};
 
 	async function chooseCountry(event) {
-<<<<<<< HEAD
-=======
 		event.target.setStyle({
 			color: 'green',
 			fillOpacity: 1,
 		});
->>>>>>> rehook_with_amadeus
 		setDestination({
 			country_a2: event.target.feature.properties.iso_a2,
 			countryName: event.target.feature.properties.admin,
 			iata: event.target.feature.iata,
 		});
 	}
-<<<<<<< HEAD
-
-	const highlightFeature = (e) => {
-		let layer = e.target;
-		layer.setStyle({
-			weight: 5,
-			color: '#666',
-			dashArray: '',
-			fillOpacity: 0.7,
-		});
-		layer.bindPopup('Hungary');
-		layer.bringToFront();
-	};
-
-	const resetHighlight = (e) => {
-		let layer = e.target;
-
-		layer.setStyle({
-			fillOpacity: 1,
-			color: 'black',
-			weight: 2,
-		});
-	};
-
-=======
->>>>>>> rehook_with_amadeus
 	function onEachCountry(country, layer) {
 		if (
 			country.properties.iso_a2 === flightDataCollection.airport.countryCode
@@ -277,14 +176,11 @@ export default function Map() {
 				<div className='spinnerMap'>
 					<Spinner variant='info' animation='grow' />
 					Loading data may take a little while..
-<<<<<<< HEAD
-=======
 				</div>
 			)}
 			{!isPending && (
 				<div className='info-container'>
 					Click on the Map to choose your Destination
->>>>>>> rehook_with_amadeus
 				</div>
 			)}
 			{!isPending && (

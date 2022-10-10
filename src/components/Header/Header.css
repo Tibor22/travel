@@ -44,8 +44,6 @@ form button:active {
 	-webkit-box-shadow: 5px 9px 9px 0px rgba(0, 0, 0, 0);
 	box-shadow: 5px 9px 9px 0px rgba(0, 0, 0, 0);
 }
-<<<<<<< HEAD
-=======
 
 @media screen and (max-width: 1200px) {
 	.header-container {
@@ -92,4 +90,3 @@ form button:active {
 		justify-self: center;
 	}
 }
->>>>>>> rehook_with_amadeus
