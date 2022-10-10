@@ -1,25 +1,38 @@
-
 .date-container {
-width: 30vw;
-
+	width: 30vw;
 }
 .date-picker {
-    display: flex;
-    align-items:center;
-    font-size:1.5rem;
-   
+	display: flex;
+	align-items: center;
+	font-size: 1.5rem;
 }
 .span__header {
-    width:22rem;
+	width: 22rem;
 }
 
 #datePicker-15 input {
-   
-padding: 1.5rem;
-} 
+	padding: 1.5rem;
+}
 #datePicker-15 input::placeholder {
-font-size: 1rem;
-} 
-#datePicker-15 input[type="text"] {
-font-size: 1rem;
-} 
+	font-size: 1rem;
+}
+#datePicker-15 input[type='text'] {
+	font-size: 1rem;
+}
+
+@media screen and (max-width: 1200px) {
+	.date-container {
+		width: 100%;
+	}
+	.span__header {
+		width: 100%;
+	}
+	.date-picker {
+		display: grid;
+	}
+}
+@media screen and (max-width: 1200px) {
+	#datePicker-15_modal {
+		max-width: 100vw;
+	}
+}

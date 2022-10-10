@@ -43,11 +43,17 @@ export default function Header() {
 			range,
 		});
 	};
+<<<<<<< HEAD
 
 	const resetSearch = () => {
 		dispatch({ type: 'RESET_SEARCH', payload: {} });
 	};
 
+=======
+	const resetSearch = () => {
+		dispatch({ type: 'RESET_SEARCH', payload: {} });
+	};
+>>>>>>> rehook_with_amadeus
 	return (
 		<div className='header-container'>
 			<div className='header'>

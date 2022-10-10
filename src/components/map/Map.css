@@ -22,3 +22,14 @@
 	left: 50%;
 	transform: translateX(-50%);
 }
+<<<<<<< HEAD
+=======
+
+@media screen and (max-width: 600px) {
+	.info-container {
+		position: absolute;
+		width: 100vw;
+		z-index: 999;
+	}
+}
+>>>>>>> rehook_with_amadeus

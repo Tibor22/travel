@@ -10,7 +10,9 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import './Map.css';
 import iconShadow from 'leaflet/dist/images/marker-shadow.png';
 import plane2 from '../../assets/plane2.png';
-import { getJSON } from '../../utilities/getJSON.js';
+import axios from 'axios';
+import qs from 'qs';
+import { iataMap } from '../../Data/countriesIATA.js';
 
 export default function Map() {
 	const { flightDataCollection, dispatch } = useContext(TravelDataContext);
@@ -29,6 +31,7 @@ export default function Map() {
 		popupAnchor: [0, -71], // point from which the popup should open relative to the iconAnchor
 	});
 
+<<<<<<< HEAD
 	const iataMap = {
 		ITA: 'FCO',
 		FIN: 'HEL',
@@ -72,12 +75,17 @@ export default function Map() {
 	};
 
 	L.Marker.prototype.options.icon = DefaultIcon;
+=======
+	L.Marker.prototype.options.icon = DefaultIcon;
+
+>>>>>>> rehook_with_amadeus
 	useEffect(() => {
 		if (destination) {
 			fetchRoute();
 		}
 		async function fetchRoute() {
 			setIsPending(true);
+<<<<<<< HEAD
 			let flightData;
 
 			let data = await getJSON(
@@ -101,18 +109,97 @@ export default function Map() {
 				});
 			}
 
+=======
+			const url = 'https://test.api.amadeus.com/v1/security/oauth2/token';
+			const secretData = {
+				grant_type: 'client_credentials',
+				client_id: process.env.REACT_APP_CLIENT_ID,
+				client_secret: process.env.REACT_APP_CLIENT_SECRET,
+			};
+			const options = {
+				method: 'POST',
+				headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+				data: qs.stringify(secretData),
+				url,
+			};
+			const api_key = await axios(options);
+			const data = await axios.get(
+				`     https://test.api.amadeus.com/v2/shopping/flight-offers?originLocationCode=${origin}&destinationLocationCode=${destination.iata}&departureDate=${from}&returnDate=${to}&adults=1&nonStop=false&max=5`,
+				{
+					headers: {
+						Authorization: `Bearer ${api_key.data.access_token}`,
+					},
+				}
+			);
+
+			const flightData = data.data.data.map((fare) => {
+				// from 2022-10-14 to 221014
+				const dateFormatted = (date) => {
+					const newDate = date.split('-');
+					const lastLetter = newDate[0].charAt(newDate[0].length - 1);
+					const firstLetter = newDate[0].charAt(0);
+					newDate[0] = firstLetter + lastLetter;
+					console.log(newDate.join(''));
+					return newDate.join('');
+				};
+				console.log(
+					'PROVIDER:',
+					Object.values(data.data.dictionaries.carriers)[0]
+				);
+				return {
+					price: fare.price.total,
+					total: fare.price.total,
+					provider: Object.values(data.data.dictionaries.carriers)[0],
+					url: `https://www.skyscanner.net/transport/flights/${origin}/${
+						destination.iata
+					}/${dateFormatted(from)}/${dateFormatted(
+						to
+					)}/?adults=2&adultsv2=2&cabinclass=economy&children=0&childrenv2=&destinationentityid=27544850&inboundaltsenabled=false&infants=0&originentityid=27544008&outboundaltsenabled=false&preferdirects=false&ref=home&rtn=1`,
+					tripId: 3,
+				};
+			});
+>>>>>>> rehook_with_amadeus
 			setIsPending(false);
 			dispatch({ type: 'COUNTRY_FOUND', payload: flightData });
 		}
 	}, [destination]);
+	const highlightFeature = (e) => {
+		let layer = e.target;
+		layer.setStyle({
+			weight: 5,
+			color: '#666',
+			dashArray: '',
+			fillOpacity: 0.7,
+		});
+
+		layer.bringToFront();
+	};
+
+	const resetHighlight = (e) => {
+		let layer = e.target;
+
+		layer.setStyle({
+			fillOpacity: 1,
+			color: 'black',
+			weight: 2,
+		});
+	};
 
 	async function chooseCountry(event) {
+<<<<<<< HEAD
+=======
+		event.target.setStyle({
+			color: 'green',
+			fillOpacity: 1,
+		});
+>>>>>>> rehook_with_amadeus
 		setDestination({
 			country_a2: event.target.feature.properties.iso_a2,
 			countryName: event.target.feature.properties.admin,
 			iata: event.target.feature.iata,
 		});
 	}
+<<<<<<< HEAD
 
 	const highlightFeature = (e) => {
 		let layer = e.target;
@@ -136,6 +223,8 @@ export default function Map() {
 		});
 	};
 
+=======
+>>>>>>> rehook_with_amadeus
 	function onEachCountry(country, layer) {
 		if (
 			country.properties.iso_a2 === flightDataCollection.airport.countryCode
@@ -188,6 +277,14 @@ export default function Map() {
 				<div className='spinnerMap'>
 					<Spinner variant='info' animation='grow' />
 					Loading data may take a little while..
+<<<<<<< HEAD
+=======
+				</div>
+			)}
+			{!isPending && (
+				<div className='info-container'>
+					Click on the Map to choose your Destination
+>>>>>>> rehook_with_amadeus
 				</div>
 			)}
 			{!isPending && (
